@@ -1,4 +1,6 @@
 #include <string>
+#include <iostream>
+#include <vector>
 #define NUMBER_OF_LETTERS 26
 
 using namespace std;
@@ -26,17 +28,37 @@ void insert(TrieNode* root, string& key){
             current->children[c-'a'] = newNode;
         }
         current = current->children[c-'a'];
+        current->data = c;
     }
     current->EndOfWord = true;
 }
 
 bool search(TrieNode* root, string& key){
     TrieNode* current = root;
-    
+    vector<TrieNode*> FoundWords;
+
+    if(key.length() == 4){
     for (int i=0; i<key.length(); ++i){
         char c = key[i];
         if (current->children[c-'a'] == nullptr) return false;
         current = current->children[c-'a'];
     }
     return current->EndOfWord;
+    }
+    
+    else if(key.length() < 4){
+        for (int i=0; i<key.length(); ++i){
+            char c = key[i];
+            if(current->children[c-'a'] == nullptr) return false;
+            current = current->children[c-'a'];
+        }
+        for(char x = 'a'; x<='z'; x++){
+            if(current->children[x-'a'] != nullptr) FoundWords.push_back(current->children[x-'a']);
+        }
+        cout << "Found Words: " << endl;
+        for (TrieNode* word : FoundWords){
+            cout << word->data << "_";
+        }
+    }
+    return true;
 }

@@ -7,7 +7,6 @@
 
 using namespace std;
 
-
 int main(void) {
 
     random_device gen;
@@ -34,12 +33,14 @@ int main(void) {
     }
     cout << "Total words: " << counter << endl;
 
+    vector<string> smallData = {"balu", "balz", "bala", "arfs", "ers", "awd", "q", "kdpe","bal"};
+
 
     TrieNode* root = new TrieNode();
-    for (string& s : wordList){
+    for (string& s : smallData){
         insert(root, s);
     }
-    vector<string> searchKeys = {"ball", "bati", "geek"};
+    vector<string> searchKeys = {"bal"};
     for(string& s : searchKeys){
         cout << "Searching " << s << endl;
         if(search(root, s)==true){
