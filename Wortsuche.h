@@ -3,6 +3,8 @@
 #include <random>
 #include <algorithm>
 #include <iostream>
+#include <mutex>
+#include <future>
 
 #define NUMBER_OF_LETTERS 26
 
@@ -132,9 +134,10 @@ bool search_withoutRec(TrieNode* root, string& key){
 
 
 
-void helper(TrieNode* root, vector<string>& FoundWords, vector<TrieNode*>& Nodes){
+void helper(TrieNode* root, vector<string>& FoundWords, vector<TrieNode*>& Nodes, mutex& mtx){
     for(char x = 'A'; x<='Z'; x++){
         if(root->children[x-'A'] != nullptr){
+            lock_guard<mutex> lock(mtx);
             Nodes.push_back(root->children[x-'A']);
             if(root->children[x-'A']->EndOfWord) FoundWords.push_back(root->children[x-'A']->data);
         }
@@ -145,6 +148,7 @@ vector<string> searchFinal(TrieNode* root, string& key){
     TrieNode* current = root;
     vector<string> FoundWords;
     vector<TrieNode*> Nodes;
+    mutex mtx;
 
     for(char c : key){
         if(current->children[c-'A'] == nullptr) return FoundWords;
@@ -152,13 +156,21 @@ vector<string> searchFinal(TrieNode* root, string& key){
     }
     if(current->EndOfWord) FoundWords.push_back(current->data);
 
-    helper(current, FoundWords, Nodes);
+    vector<future<void>> futures;
+
+    helper(current, FoundWords, Nodes, mtx);
     while(!Nodes.empty()){
         vector<TrieNode*> Intermediate_nodes = Nodes;
         Nodes.clear();
         for(TrieNode* node : Intermediate_nodes){
-            helper(node, FoundWords, Nodes);
+            futures.push_back(async(launch::async, helper, node, ref(FoundWords), ref(Nodes), ref(mtx)));
         }
+        // Warte auf alle asynchronen Tasks
+        for (auto& future : futures) {
+            future.get();
+        }
+        
+        futures.clear();  // Leere die Futures-Liste für die nächste Runde
     }
     return FoundWords;
 }

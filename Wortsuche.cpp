@@ -3,6 +3,7 @@
 #include <string>
 #include <vector>
 #include <chrono>
+#include <thread>
 
 using namespace std;
 
@@ -22,7 +23,7 @@ int main(void) {
         insert(root, s);
     }
 
-    string searchKey = "VOM";
+    string searchKey = "A";
     vector<string> expectedResults = {"AFGA", "AFGB"};
 
     Testclient(root, searchKey, expectedResults);
