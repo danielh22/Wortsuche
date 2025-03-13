@@ -143,7 +143,6 @@ void helper(TrieNode* root, vector<string>& FoundWords, vector<TrieNode*>& Nodes
 
 vector<string> searchFinal(TrieNode* root, string& key){
     TrieNode* current = root;
-    TrieNode* keyRoot = nullptr;
     vector<string> FoundWords;
     vector<TrieNode*> Nodes;
 
@@ -151,11 +150,9 @@ vector<string> searchFinal(TrieNode* root, string& key){
         if(current->children[c-'A'] == nullptr) return FoundWords;
         current = current->children[c-'A'];
     }
-    cout << current->data << " current data" << endl;
-    keyRoot = current;
-    if(keyRoot->EndOfWord) FoundWords.push_back(keyRoot->data);
+    if(current->EndOfWord) FoundWords.push_back(current->data);
 
-    helper(keyRoot, FoundWords, Nodes);
+    helper(current, FoundWords, Nodes);
     while(!Nodes.empty()){
         vector<TrieNode*> Intermediate_nodes = Nodes;
         Nodes.clear();

@@ -11,14 +11,18 @@ void Testclient(TrieNode* root, string& key, vector<string>& expectedResult);
 int main(void) {
 
     vector<string> wordList = createWordList();
-
+    /*cout << "all words: " << endl; 
+    for(string& word : wordList){
+        cout << word << " ";
+    }*/
+    
     TrieNode* root = new TrieNode();
  
     for (string& s : wordList){
         insert(root, s);
     }
 
-    string searchKey = "X";
+    string searchKey = "VOM";
     vector<string> expectedResults = {"AFGA", "AFGB"};
 
     Testclient(root, searchKey, expectedResults);
@@ -43,9 +47,9 @@ void Testclient(TrieNode* root, string& key, vector<string>& expectedResult){
 
     
     cout << "Found the following words in " << duration.count() << " nanoseconds: " << endl;
-    /*for(string& word : foundWords){
+    for(string& word : foundWords){
         cout << word << " ";
-    }*/
+    }
 
 
 }
