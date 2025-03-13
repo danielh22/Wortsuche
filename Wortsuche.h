@@ -59,47 +59,6 @@ vector<string> createWordList(){
     return wordList;
 }
 
-
-
-bool search_withoutRec(TrieNode* root, string& key){
-    TrieNode* current = root;
-    TrieNode* keyRoot = nullptr;
-    TrieNode* keyRoot2 = nullptr;
-    TrieNode* keyRoot3 = nullptr;
-    TrieNode* keyRoot4 = nullptr;
-    vector<TrieNode*> FoundWords;
-
-    for(char c : key){
-        if(current->children[c-'A'] == nullptr) return false;
-        current = current->children[c-'A'];
-    }
-    keyRoot = current;
-    if(keyRoot->EndOfWord) FoundWords.push_back(keyRoot);
-    for(char x = 'A'; x<='Z'; x++){
-        if(keyRoot->children[x-'A'] != nullptr){
-            keyRoot2 = keyRoot->children[x-'A'];
-            if(keyRoot2->EndOfWord) FoundWords.push_back(keyRoot2);
-            for(char y = 'A'; y<='Z'; y++){
-                if(keyRoot2->children[y-'A'] != nullptr){
-                    keyRoot3 = keyRoot2->children[y-'A'];
-                    if(keyRoot3->EndOfWord) FoundWords.push_back(keyRoot3);
-                    for(char z = 'A'; z<='Z'; z++){
-                        if(keyRoot3->children[z-'A'] != nullptr){
-                            keyRoot4 = keyRoot3->children[z-'A'];
-                            if(keyRoot4->EndOfWord) FoundWords.push_back(keyRoot4);
-                        }
-                    }
-                }   
-            }   
-        }
-    }
-    cout << "Found Words: " << endl;
-    for (TrieNode* word : FoundWords){
-        cout << word->data << " & ";
-    }
-    return true;
-}
-
 void searchWordsRecursive(TrieNode* root, vector<TrieNode*>& FoundTrieNodes, string currentPrefix=""){
     if(root==nullptr) return;
 
@@ -128,4 +87,81 @@ vector<string> searchPrefixRecursive(TrieNode* root, string currentPrefix=""){
         foundWords.push_back(word->data);
     }
     return foundWords;
+}
+
+
+
+
+
+
+bool search_withoutRec(TrieNode* root, string& key){
+    TrieNode* current = root;
+    TrieNode* keyRoot = nullptr;
+    vector<TrieNode*> FoundWords;
+
+    for(char c : key){
+        if(current->children[c-'A'] == nullptr) return false;
+        current = current->children[c-'A'];
+    }
+    keyRoot = current;
+    if(keyRoot->EndOfWord) FoundWords.push_back(keyRoot);
+    for(char x = 'A'; x<='Z'; x++){
+        if(keyRoot->children[x-'A'] != nullptr){
+            TrieNode* keyRoot2 = keyRoot->children[x-'A'];
+            if(keyRoot2->EndOfWord) FoundWords.push_back(keyRoot2);
+            for(char y = 'A'; y<='Z'; y++){
+                if(keyRoot2->children[y-'A'] != nullptr){
+                    TrieNode* keyRoot3 = keyRoot2->children[y-'A'];
+                    if(keyRoot3->EndOfWord) FoundWords.push_back(keyRoot3);
+                    for(char z = 'A'; z<='Z'; z++){
+                        if(keyRoot3->children[z-'A'] != nullptr){
+                            TrieNode* keyRoot4 = keyRoot3->children[z-'A'];
+                            if(keyRoot4->EndOfWord) FoundWords.push_back(keyRoot4);
+                        }
+                    }
+                }   
+            }   
+        }
+    }
+    cout << "Found Words: " << endl;
+    for (TrieNode* word : FoundWords){
+        cout << word->data << " & ";
+    }
+    return true;
+}
+
+
+
+void helper(TrieNode* root, vector<string>& FoundWords, vector<TrieNode*>& Nodes){
+    for(char x = 'A'; x<='Z'; x++){
+        if(root->children[x-'A'] != nullptr){
+            Nodes.push_back(root->children[x-'A']);
+            if(root->children[x-'A']->EndOfWord) FoundWords.push_back(root->children[x-'A']->data);
+        }
+    }
+}
+
+vector<string> searchFinal(TrieNode* root, string& key){
+    TrieNode* current = root;
+    TrieNode* keyRoot = nullptr;
+    vector<string> FoundWords;
+    vector<TrieNode*> Nodes;
+
+    for(char c : key){
+        if(current->children[c-'A'] == nullptr) return FoundWords;
+        current = current->children[c-'A'];
+    }
+    cout << current->data << " current data" << endl;
+    keyRoot = current;
+    if(keyRoot->EndOfWord) FoundWords.push_back(keyRoot->data);
+
+    helper(keyRoot, FoundWords, Nodes);
+    while(!Nodes.empty()){
+        vector<TrieNode*> Intermediate_nodes = Nodes;
+        Nodes.clear();
+        for(TrieNode* node : Intermediate_nodes){
+            helper(node, FoundWords, Nodes);
+        }
+    }
+    return FoundWords;
 }

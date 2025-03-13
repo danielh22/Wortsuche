@@ -2,8 +2,11 @@
 #include "Wortsuche.h"
 #include <string>
 #include <vector>
+#include <chrono>
 
 using namespace std;
+
+void Testclient(TrieNode* root, string& key, vector<string>& expectedResult);
 
 int main(void) {
 
@@ -15,12 +18,34 @@ int main(void) {
         insert(root, s);
     }
 
-    string searchKey = "BAR";
+    string searchKey = "X";
+    vector<string> expectedResults = {"AFGA", "AFGB"};
 
-    vector<string> foundWords = searchPrefixRecursive(root, searchKey);
-    //vector<string> foundWords = searchPrefixNoRecursion(root, searchKey);
+    Testclient(root, searchKey, expectedResults);
 
-    for(string& word : foundWords){
+    //vector<string> foundWords = searchPrefixRecursive(root, searchKey);
+    //vector<string> foundWords = searchFinal(root, searchKey);
+
+    //for(string& word : foundWords){
+    //    cout << word << " ";
+    //}
+}
+
+
+
+void Testclient(TrieNode* root, string& key, vector<string>& expectedResult){
+    auto start = chrono::high_resolution_clock::now();
+
+    vector<string> foundWords = searchFinal(root, key);
+
+    auto end = chrono::high_resolution_clock::now();
+    auto duration = chrono::duration_cast<chrono::nanoseconds>(end-start);
+
+    
+    cout << "Found the following words in " << duration.count() << " nanoseconds: " << endl;
+    /*for(string& word : foundWords){
         cout << word << " ";
-    }
+    }*/
+
+
 }
