@@ -22,7 +22,7 @@ int main(void) {
         insert(root, s);
     }
 
-    string searchKey = "VOM";
+    string searchKey = "R";
     vector<string> expectedResults = {"AFGA", "AFGB"};
 
     Testclient(root, searchKey, expectedResults);
@@ -47,9 +47,9 @@ void Testclient(TrieNode* root, string& key, vector<string>& expectedResult){
 
     
     cout << "Found the following words in " << duration.count() << " nanoseconds: " << endl;
-    for(string& word : foundWords){
-        cout << word << " ";
-    }
+    //for(string& word : foundWords){
+    //    cout << word << " ";
+    //}
 
 
 }

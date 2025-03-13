@@ -3,10 +3,15 @@
 #include <random>
 #include <algorithm>
 #include <iostream>
+#include <future>  
+#include <thread>
+#include <atomic>
 
 #define NUMBER_OF_LETTERS 26
 
 using namespace std;
+
+atomic<int> threadCounter(0);
 
 struct TrieNode{
     public: 
@@ -153,12 +158,25 @@ vector<string> searchFinal(TrieNode* root, string& key){
     if(current->EndOfWord) FoundWords.push_back(current->data);
 
     helper(current, FoundWords, Nodes);
+
+    vector<future<void>> futures;
     while(!Nodes.empty()){
         vector<TrieNode*> Intermediate_nodes = Nodes;
         Nodes.clear();
+
         for(TrieNode* node : Intermediate_nodes){
-            helper(node, FoundWords, Nodes);
+            futures.push_back(async(launch::async, [&]() {
+                threadCounter.fetch_add(1, std::memory_order_relaxed);
+                helper(node, FoundWords, Nodes);
+                cout << "Threads used: " << threadCounter.load() << endl;
+
+            }));
         }
+        for(auto& fut : futures){
+            fut.get();
+        }
+        futures.clear();
     }
+    cout << "Threads used: " << threadCounter.load() << endl;
     return FoundWords;
 }
