@@ -42,25 +42,6 @@ void insert(TrieNode* root, string& key){
     current->EndOfWord = true;
 }
 
-vector<string> createWordList(){
-    random_device gen;
-    mt19937 g(gen());
-    vector<string> wordList;
-
-    for (char one = 'A'; one<='Z'; ++one){
-        for(char two = 'A'; two<='Z'; ++two){
-            for(char three='A'; three<='Z'; three++){
-                for(char four='A'; four<='Z'; four++){
-                    string word = {one, two, three, four};
-                    wordList.push_back(word);
-                }
-            }
-        }
-    }
-    shuffle(wordList.begin(), wordList.end(), gen);
-    return wordList;
-}
-
 void generateWords(int length, const string& currentWord, vector<string>& wordList){
     if(currentWord.size() == length){
         wordList.push_back(currentWord);
@@ -83,80 +64,7 @@ vector<string> createWordListRecursive(int length){
     return wordList;
 }
 
-void searchWordsRecursive(TrieNode* root, vector<TrieNode*>& FoundTrieNodes, string currentPrefix=""){
-    if(root==nullptr) return;
-
-    if(root->EndOfWord == true){
-        FoundTrieNodes.push_back(root);
-    }
-
-    for(char c='A'; c<='Z'; c++){
-        int index = c-'A';
-        if(root->children[index] != nullptr){
-            searchWordsRecursive(root->children[index], FoundTrieNodes, currentPrefix+c);
-        }
-    }
-}
-
-vector<string> searchPrefixRecursive(TrieNode* root, string currentPrefix=""){
-    vector<string> foundWords;
-    vector<TrieNode*> FoundTrieNodes;
-
-    for(char c : currentPrefix){
-        if(root->children[c-'A'] == nullptr) return foundWords;
-        root = root->children[c-'A'];
-    }
-    searchWordsRecursive(root, FoundTrieNodes, currentPrefix);
-    for (TrieNode* word : FoundTrieNodes){
-        foundWords.push_back(word->data);
-    }
-    return foundWords;
-}
-
-
-
-
-
-
-bool search_withoutRec(TrieNode* root, string& key){
-    TrieNode* current = root;
-    TrieNode* keyRoot = nullptr;
-    vector<TrieNode*> FoundWords;
-
-    for(char c : key){
-        if(current->children[c-'A'] == nullptr) return false;
-        current = current->children[c-'A'];
-    }
-    keyRoot = current;
-    if(keyRoot->EndOfWord) FoundWords.push_back(keyRoot);
-    for(char x = 'A'; x<='Z'; x++){
-        if(keyRoot->children[x-'A'] != nullptr){
-            TrieNode* keyRoot2 = keyRoot->children[x-'A'];
-            if(keyRoot2->EndOfWord) FoundWords.push_back(keyRoot2);
-            for(char y = 'A'; y<='Z'; y++){
-                if(keyRoot2->children[y-'A'] != nullptr){
-                    TrieNode* keyRoot3 = keyRoot2->children[y-'A'];
-                    if(keyRoot3->EndOfWord) FoundWords.push_back(keyRoot3);
-                    for(char z = 'A'; z<='Z'; z++){
-                        if(keyRoot3->children[z-'A'] != nullptr){
-                            TrieNode* keyRoot4 = keyRoot3->children[z-'A'];
-                            if(keyRoot4->EndOfWord) FoundWords.push_back(keyRoot4);
-                        }
-                    }
-                }   
-            }   
-        }
-    }
-    cout << "Found Words: " << endl;
-    for (TrieNode* word : FoundWords){
-        cout << word->data << " & ";
-    }
-    return true;
-}
-
-
-
-void helper(TrieNode* root, vector<TrieNode*>& Nodes, vector<string>& foundWords, mutex& mtx){
+void searchHelper(TrieNode* root, vector<TrieNode*>& Nodes, vector<string>& foundWords, mutex& mtx){
     vector<TrieNode*> localNodes;
     for(char x = 'A'; x<='Z'; x++){
         if(root->children[x-'A'] != nullptr){
@@ -166,7 +74,7 @@ void helper(TrieNode* root, vector<TrieNode*>& Nodes, vector<string>& foundWords
     lock_guard<mutex> lock(mtx);
     Nodes.insert(Nodes.end(), localNodes.begin(), localNodes.end());
     for(TrieNode* t : localNodes){
-        foundWords.push_back(t->data);
+        if(t->EndOfWord) foundWords.push_back(t->data);
     }
 }
 
@@ -188,10 +96,10 @@ vector<string> searchFinal(TrieNode* root, string& key){
     
     // Helper to distribute the work among threads
     auto threadHelper = [&mtx, &FoundWords, &Nodes](TrieNode* node) {
-        helper(node, Nodes, FoundWords, mtx);
+        searchHelper(node, Nodes, FoundWords, mtx);
     };
 
-    helper(current, Nodes, FoundWords, mtx);
+    searchHelper(current, Nodes, FoundWords, mtx);
     while(!Nodes.empty()){
         vector<TrieNode*> Intermediate_nodes = Nodes;
         Nodes.clear();
@@ -218,41 +126,3 @@ vector<string> searchFinal(TrieNode* root, string& key){
     }
     return FoundWords;
 }
-
-
-/*mutex mtx;
-void searchWordsRecursiveThreads(TrieNode* root, vector<TrieNode*>& FoundTrieNodes, string currentPrefix=""){
-    if(root==nullptr) return;
-
-    if(root->EndOfWord == true){
-        lock_guard<mutex> lock(mtx);
-        FoundTrieNodes.push_back(root);
-    }
-
-    vector<thread> threads;
-    for(char c='A'; c<='Z'; c++){
-        int index = c-'A';
-        if(root->children[index] != nullptr){
-            threads.push_back(thread(searchWordsRecursiveThreads, root->children[index], ref(FoundTrieNodes), currentPrefix+c));
-        }
-    }
-
-    for (auto& th : threads){
-        th.join();
-    }
-}
-
-vector<string> searchPrefixRecursiveThreads(TrieNode* root, string currentPrefix=""){
-    vector<string> foundWords;
-    vector<TrieNode*> FoundTrieNodes;
-
-    for(char c : currentPrefix){
-        if(root->children[c-'A'] == nullptr) return foundWords;
-        root = root->children[c-'A'];
-    }
-    searchWordsRecursiveThreads(root, FoundTrieNodes, currentPrefix);
-    for (TrieNode* word : FoundTrieNodes){
-        foundWords.push_back(word->data);
-    }
-    return foundWords;
-}*/

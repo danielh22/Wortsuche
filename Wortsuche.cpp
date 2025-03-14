@@ -25,11 +25,10 @@ int main(void) {
         insert(root, s);
     }
 
-    string searchKey = "AWD";
+    string searchKey = "XS";
 
     Testclient(root, searchKey);
 
-    //vector<string> foundWords = searchPrefixRecursive(root, searchKey);
     //vector<string> foundWords = searchFinal(root, searchKey);
 
     //for(string& word : foundWords){
