@@ -5,7 +5,6 @@
 #include <iostream>
 #include <mutex>
 #include <thread>
-#include <future>
 
 #define NUMBER_OF_LETTERS 26
 
@@ -48,7 +47,7 @@ void generateWords(int length, const string& currentWord, vector<string>& wordLi
         return;
     }
 
-    for(char c='A'; c<='Z'; c++){
+    for(char c='A'; c<='S'; c++){
         generateWords(length, currentWord+c, wordList);
     }
 }
@@ -98,7 +97,6 @@ vector<string> searchFinal(TrieNode* root, string& key){
     auto threadHelper = [&mtx, &FoundWords, &Nodes](TrieNode* node) {
         searchHelper(node, Nodes, FoundWords, mtx);
     };
-
     searchHelper(current, Nodes, FoundWords, mtx);
     while(!Nodes.empty()){
         vector<TrieNode*> Intermediate_nodes = Nodes;
@@ -121,8 +119,57 @@ vector<string> searchFinal(TrieNode* root, string& key){
         for (auto& t : threads) {
             t.join();
         }
-        
         threads.clear();  // Leere die Futures-Liste für die nächste Runde
+    }
+    return FoundWords;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+void searchHelperWithoutMutex(TrieNode* root, vector<TrieNode*>& Nodes, vector<string>& foundWords, mutex& mtx){
+    vector<TrieNode*> localNodes;
+    for(char x = 'A'; x<='Z'; x++){
+        if(root->children[x-'A'] != nullptr){
+            localNodes.push_back(root->children[x-'A']);
+        }
+    }
+    Nodes.insert(Nodes.end(), localNodes.begin(), localNodes.end());
+    for(TrieNode* t : localNodes){
+        if(t->EndOfWord) foundWords.push_back(t->data);
+    }
+}
+
+
+vector<string> searchFinalWithoutMutex(TrieNode* root, string& key){
+    TrieNode* current = root;
+    vector<string> FoundWords;
+    vector<TrieNode*> Nodes;
+    mutex mtx;
+
+    for(char c : key){
+        if(current->children[c-'A'] == nullptr) return FoundWords;
+        current = current->children[c-'A'];
+    }
+    if(current->EndOfWord) FoundWords.push_back(current->data);
+
+    searchHelperWithoutMutex(current, Nodes, FoundWords, mtx);
+    while(!Nodes.empty()){
+        vector<TrieNode*> Intermediate_nodes = Nodes;
+        Nodes.clear();
+
+        for(TrieNode* inter : Intermediate_nodes){searchHelperWithoutMutex(inter, Nodes, FoundWords, mtx);}
     }
     return FoundWords;
 }

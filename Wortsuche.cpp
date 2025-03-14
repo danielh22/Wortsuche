@@ -1,9 +1,8 @@
-#include <iostream>  // Ensure this is properly included
-#include "Wortsuche.h"
+#include <iostream> 
 #include <string>
 #include <vector>
 #include <chrono>
-#include <thread>
+#include "Wortsuche.h"
 
 using namespace std;
 
@@ -11,8 +10,7 @@ void Testclient(TrieNode* root, string& key);
 
 int main(void) {
 
-    //vector<string> wordList = createWordList();
-    vector<string> wordList = createWordListRecursive(4);
+    vector<string> wordList = createWordListRecursive(6);
 
     /*cout << "all words: " << endl; 
     for(string& word : wordList){
@@ -25,7 +23,7 @@ int main(void) {
         insert(root, s);
     }
 
-    string searchKey = "XS";
+    string searchKey = "AM";
 
     Testclient(root, searchKey);
 
@@ -39,6 +37,7 @@ int main(void) {
 
 
 void Testclient(TrieNode* root, string& key){
+    cout << "Start testclient" << endl;
     auto start = chrono::high_resolution_clock::now();
 
     vector<string> foundWords = searchFinal(root, key);
@@ -47,10 +46,10 @@ void Testclient(TrieNode* root, string& key){
     auto duration = chrono::duration_cast<chrono::microseconds>(end-start);
 
     
-    cout << "Found the following words: " << endl;
-    for(string& word : foundWords){
-        cout << word << ", ";
-    }
+    //cout << "Found the following words: " << endl;
+    //for(string& word : foundWords){
+    //   cout << word << ", ";
+    //}
     cout << endl << "The search took " << duration.count() << " microseconds." << endl;
 
 
