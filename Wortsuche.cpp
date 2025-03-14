@@ -11,7 +11,9 @@ void Testclient(TrieNode* root, string& key, vector<string>& expectedResult);
 
 int main(void) {
 
-    vector<string> wordList = createWordList();
+    //vector<string> wordList = createWordList();
+    vector<string> wordList = createWordListRecursive(5);
+
     /*cout << "all words: " << endl; 
     for(string& word : wordList){
         cout << word << " ";
@@ -23,7 +25,7 @@ int main(void) {
         insert(root, s);
     }
 
-    string searchKey = "A";
+    string searchKey = "T";
     vector<string> expectedResults = {"AFGA", "AFGB"};
 
     Testclient(root, searchKey, expectedResults);
@@ -44,13 +46,14 @@ void Testclient(TrieNode* root, string& key, vector<string>& expectedResult){
     vector<string> foundWords = searchFinal(root, key);
 
     auto end = chrono::high_resolution_clock::now();
-    auto duration = chrono::duration_cast<chrono::nanoseconds>(end-start);
+    auto duration = chrono::duration_cast<chrono::microseconds>(end-start);
 
     
-    cout << "Found the following words in " << duration.count() << " nanoseconds: " << endl;
-    for(string& word : foundWords){
-        cout << word << " ";
-    }
+    cout << "Found the following words: " << endl;
+    //for(string& word : foundWords){
+    //    cout << word << " ";
+    //}
+    cout << endl << "The search took " << duration.count() << " microseconds: " << endl;
 
 
 }

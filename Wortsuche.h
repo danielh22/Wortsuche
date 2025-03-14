@@ -4,6 +4,7 @@
 #include <algorithm>
 #include <iostream>
 #include <mutex>
+#include <thread>
 #include <future>
 
 #define NUMBER_OF_LETTERS 26
@@ -46,7 +47,6 @@ vector<string> createWordList(){
     mt19937 g(gen());
     vector<string> wordList;
 
-
     for (char one = 'A'; one<='Z'; ++one){
         for(char two = 'A'; two<='Z'; ++two){
             for(char three='A'; three<='Z'; three++){
@@ -58,6 +58,28 @@ vector<string> createWordList(){
         }
     }
     shuffle(wordList.begin(), wordList.end(), gen);
+    return wordList;
+}
+
+void generateWords(int length, const string& currentWord, vector<string>& wordList){
+    if(currentWord.size() == length){
+        wordList.push_back(currentWord);
+        return;
+    }
+
+    for(char c='A'; c<='Z'; c++){
+        generateWords(length, currentWord+c, wordList);
+    }
+}
+
+vector<string> createWordListRecursive(int length){
+    random_device gen;
+    mt19937 g(gen());
+    vector<string> wordList;
+
+    generateWords(length, "", wordList);
+    shuffle(wordList.begin(), wordList.end(), gen);
+
     return wordList;
 }
 
@@ -174,3 +196,41 @@ vector<string> searchFinal(TrieNode* root, string& key){
     }
     return FoundWords;
 }
+
+
+/*mutex mtx;
+void searchWordsRecursiveThreads(TrieNode* root, vector<TrieNode*>& FoundTrieNodes, string currentPrefix=""){
+    if(root==nullptr) return;
+
+    if(root->EndOfWord == true){
+        lock_guard<mutex> lock(mtx);
+        FoundTrieNodes.push_back(root);
+    }
+
+    vector<thread> threads;
+    for(char c='A'; c<='Z'; c++){
+        int index = c-'A';
+        if(root->children[index] != nullptr){
+            threads.push_back(thread(searchWordsRecursiveThreads, root->children[index], ref(FoundTrieNodes), currentPrefix+c));
+        }
+    }
+
+    for (auto& th : threads){
+        th.join();
+    }
+}
+
+vector<string> searchPrefixRecursiveThreads(TrieNode* root, string currentPrefix=""){
+    vector<string> foundWords;
+    vector<TrieNode*> FoundTrieNodes;
+
+    for(char c : currentPrefix){
+        if(root->children[c-'A'] == nullptr) return foundWords;
+        root = root->children[c-'A'];
+    }
+    searchWordsRecursiveThreads(root, FoundTrieNodes, currentPrefix);
+    for (TrieNode* word : FoundTrieNodes){
+        foundWords.push_back(word->data);
+    }
+    return foundWords;
+}*/
