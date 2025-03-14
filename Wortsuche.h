@@ -156,13 +156,17 @@ bool search_withoutRec(TrieNode* root, string& key){
 
 
 
-void helper(TrieNode* root, vector<string>& FoundWords, vector<TrieNode*>& Nodes, mutex& mtx){
+void helper(TrieNode* root, vector<TrieNode*>& Nodes, vector<string>& foundWords, mutex& mtx){
+    vector<TrieNode*> localNodes;
     for(char x = 'A'; x<='Z'; x++){
         if(root->children[x-'A'] != nullptr){
-            lock_guard<mutex> lock(mtx);
-            Nodes.push_back(root->children[x-'A']);
-            if(root->children[x-'A']->EndOfWord) FoundWords.push_back(root->children[x-'A']->data);
+            localNodes.push_back(root->children[x-'A']);
         }
+    }
+    lock_guard<mutex> lock(mtx);
+    Nodes.insert(Nodes.end(), localNodes.begin(), localNodes.end());
+    for(TrieNode* t : localNodes){
+        foundWords.push_back(t->data);
     }
 }
 
@@ -178,21 +182,39 @@ vector<string> searchFinal(TrieNode* root, string& key){
     }
     if(current->EndOfWord) FoundWords.push_back(current->data);
 
-    vector<future<void>> futures;
+    unsigned int numThreads = std::thread::hardware_concurrency(); // Adjust thread count based on hardware
+    vector<thread> threads;
 
-    helper(current, FoundWords, Nodes, mtx);
+    
+    // Helper to distribute the work among threads
+    auto threadHelper = [&mtx, &FoundWords, &Nodes](TrieNode* node) {
+        helper(node, Nodes, FoundWords, mtx);
+    };
+
+    helper(current, Nodes, FoundWords, mtx);
     while(!Nodes.empty()){
         vector<TrieNode*> Intermediate_nodes = Nodes;
         Nodes.clear();
-        for(TrieNode* node : Intermediate_nodes){
-            futures.push_back(async(launch::async, helper, node, ref(FoundWords), ref(Nodes), ref(mtx)));
+        unsigned int batchSize = Intermediate_nodes.size() / numThreads + 1;
+
+        for (unsigned int i = 0; i < numThreads; i++) {
+            auto begin = Intermediate_nodes.begin() + i * batchSize;
+            auto end = (i + 1) * batchSize < Intermediate_nodes.size() ? Intermediate_nodes.begin() + (i + 1) * batchSize : Intermediate_nodes.end();
+
+            if (begin < end) {
+                threads.push_back(thread([=]() {
+                    for (auto node = begin; node != end; ++node) {
+                        threadHelper(*node);
+                    }
+                }));
+            }
         }
         // Warte auf alle asynchronen Tasks
-        for (auto& future : futures) {
-            future.get();
+        for (auto& t : threads) {
+            t.join();
         }
         
-        futures.clear();  // Leere die Futures-Liste für die nächste Runde
+        threads.clear();  // Leere die Futures-Liste für die nächste Runde
     }
     return FoundWords;
 }
