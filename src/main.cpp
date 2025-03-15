@@ -1,16 +1,15 @@
 #include <iostream> 
-#include <string>
-#include <vector>
 #include <chrono>
-#include "Wortsuche.h"
+#include "wortsuche.h"
+#include "wortliste.h"
 
 using namespace std;
 
-void Testclient(TrieNode* root, string& key);
+void Testclient(TrieNode* root, string& key, int numRuns);
 
 int main(void) {
 
-    vector<string> wordList = createWordListRecursive(6);
+    vector<string> wordList = createWordListRecursive(4);
 
     /*cout << "all words: " << endl; 
     for(string& word : wordList){
@@ -23,9 +22,9 @@ int main(void) {
         insert(root, s);
     }
 
-    string searchKey = "AM";
+    string searchKey = "TF";
 
-    Testclient(root, searchKey);
+    Testclient(root, searchKey, 20);
 
     //vector<string> foundWords = searchFinal(root, searchKey);
 
@@ -36,21 +35,22 @@ int main(void) {
 
 
 
-void Testclient(TrieNode* root, string& key){
+void Testclient(TrieNode* root, string& key, int numRuns){
     cout << "Start testclient" << endl;
     auto start = chrono::high_resolution_clock::now();
+    vector<string> foundWords;
 
-    vector<string> foundWords = searchFinal(root, key);
-
+    for(int i=0; i<=numRuns; ++i){
+        foundWords = searchFinal(root, key);
+    }
     auto end = chrono::high_resolution_clock::now();
     auto duration = chrono::duration_cast<chrono::microseconds>(end-start);
 
-    
-    //cout << "Found the following words: " << endl;
-    //for(string& word : foundWords){
-    //   cout << word << ", ";
-    //}
-    cout << endl << "The search took " << duration.count() << " microseconds." << endl;
+    cout << "Found the following words: " << endl;
+    for(string& word : foundWords){
+       cout << word << ", ";
+    }
+    cout << endl << "The search took an average of " << duration.count()/numRuns << " microseconds (" << numRuns << " Runs)." << endl;
 
 
 }
