@@ -5,7 +5,7 @@
 
 using namespace std;
 
-void Testclient(TrieNode* root, string& key, int numRuns);
+void Testclient(Trie* trie, string& key, int numRuns);
 
 int main(void) {
 
@@ -16,15 +16,15 @@ int main(void) {
         cout << word << " ";
     }*/
 
-    TrieNode* root = new TrieNode();
+    Trie* trie = new Trie();
  
     for (string& s : wordList){
-        insert(root, s);
+        trie->insert(s);
     }
 
-    string searchKey = "TF";
+    string searchKey = "T";
 
-    Testclient(root, searchKey, 20);
+    Testclient(trie, searchKey, 20);
 
     //vector<string> foundWords = searchFinal(root, searchKey);
 
@@ -35,13 +35,13 @@ int main(void) {
 
 
 
-void Testclient(TrieNode* root, string& key, int numRuns){
+void Testclient(Trie* trie, string& key, int numRuns){
     cout << "Start testclient" << endl;
     auto start = chrono::high_resolution_clock::now();
     vector<string> foundWords;
 
     for(int i=0; i<=numRuns; ++i){
-        foundWords = searchFinal(root, key);
+        foundWords = searchFinal(trie->root, key);
     }
     auto end = chrono::high_resolution_clock::now();
     auto duration = chrono::duration_cast<chrono::microseconds>(end-start);

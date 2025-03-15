@@ -15,6 +15,16 @@ struct TrieNode{
         TrieNode();
 };
 
-#endif
+struct Trie{
+    public:
+        TrieNode* root;
 
-void insert(TrieNode* root, std::string& key);
+        void insert(std::string& key);
+        Trie();
+        ~Trie();
+    
+    private:
+        void deleteTrie(TrieNode* node);    
+};
+
+#endif

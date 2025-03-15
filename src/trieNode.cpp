@@ -1,4 +1,5 @@
 #include "trieNode.h"
+#include <iostream>
 
 using namespace std;
 
@@ -8,9 +9,30 @@ TrieNode::TrieNode() : EndOfWord(false) {
     }
 }
 
+Trie::Trie(){
+    this->root = new TrieNode;
+}
 
-void insert(TrieNode* root, string& key){
-    TrieNode* current = root;
+Trie::~Trie(){
+    deleteTrie(root);
+    cout << "Trie deleted" << endl;
+}
+
+void Trie::deleteTrie(TrieNode* node) {
+    if (node == nullptr) return; // Base case for recursion
+    
+    // Recursively delete all child nodes
+    for (int i = 0; i < 26; ++i) {
+        if (node->children[i] != nullptr) {
+            deleteTrie(node->children[i]); // Recursive delete
+        }
+    }
+    
+    delete node; // Delete the current node after its children are deleted
+}
+
+void Trie::insert(string& key){
+    TrieNode* current = this->root;
     string parent_data;
     
     for (int i=0; i<key.length(); ++i){
@@ -20,7 +42,6 @@ void insert(TrieNode* root, string& key){
             current->children[c-'A'] = newNode;
         }
         current = current->children[c-'A'];
-        string inter(1,c);
         current->data = parent_data + c;
         parent_data = parent_data + c;
     }
