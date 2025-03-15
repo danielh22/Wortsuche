@@ -1,6 +1,7 @@
 #include <iostream> 
 #include <chrono>
 #include "wortsuche.h"
+#include "wortliste.h"
 
 using namespace std;
 
@@ -21,9 +22,9 @@ int main(void) {
         insert(root, s);
     }
 
-    string searchKey = "F";
+    string searchKey = "TF";
 
-    Testclient(root, searchKey, 50);
+    Testclient(root, searchKey, 20);
 
     //vector<string> foundWords = searchFinal(root, searchKey);
 
@@ -36,28 +37,20 @@ int main(void) {
 
 void Testclient(TrieNode* root, string& key, int numRuns){
     cout << "Start testclient" << endl;
-    auto start1 = chrono::high_resolution_clock::now();
+    auto start = chrono::high_resolution_clock::now();
     vector<string> foundWords;
-
-    for(int i=0; i<=numRuns; ++i){
-        foundWords = searchFinalWithoutThreads(root, key);
-    }
-    auto end1 = chrono::high_resolution_clock::now();
-    auto duration1 = chrono::duration_cast<chrono::microseconds>(end1-start1);
-
-    auto start2 = chrono::high_resolution_clock::now();
 
     for(int i=0; i<=numRuns; ++i){
         foundWords = searchFinal(root, key);
     }
-    auto end2 = chrono::high_resolution_clock::now();
-    auto duration2 = chrono::duration_cast<chrono::microseconds>(end2-start2);
-    //cout << "Found the following words: " << endl;
-    //for(string& word : foundWords){
-    //   cout << word << ", ";
-    //}
-    cout << endl << "The search without Threading took an average of " << duration1.count()/numRuns << " microseconds (" << numRuns << " Runs)." << endl;
-    cout << "The search with Threading took an average of " << duration2.count()/numRuns << " microseconds (" << numRuns << " Runs)." << endl;
+    auto end = chrono::high_resolution_clock::now();
+    auto duration = chrono::duration_cast<chrono::microseconds>(end-start);
+
+    cout << "Found the following words: " << endl;
+    for(string& word : foundWords){
+       cout << word << ", ";
+    }
+    cout << endl << "The search took an average of " << duration.count()/numRuns << " microseconds (" << numRuns << " Runs)." << endl;
 
 
 }

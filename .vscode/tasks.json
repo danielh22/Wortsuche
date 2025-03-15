@@ -1,0 +1,27 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "build",
+            "type": "shell",
+            "command": "g++",
+            "args": [
+                "-g",
+                "-I${workspaceFolder}/include",  // Füge den Include-Pfad hinzu
+                "${workspaceFolder}/src/trieNode.cpp",  // Weitere .cpp-Datei
+                "${workspaceFolder}/src/wortsuche.cpp",  // Weitere .cpp-Datei
+                "${workspaceFolder}/src/wortliste.cpp",  // Weitere .cpp-Datei
+
+                "${file}",
+                "-o",
+                "${fileDirname}\\${fileBasenameNoExtension}.exe"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": ["$gcc"],
+            "detail": "Generated task for C++"
+        }
+    ]
+}
