@@ -1,5 +1,5 @@
-#ifndef TRIENODE_H
-#define TRIENODE_H
+#ifndef TRIE_H
+#define TRIE_H
 
 #include <string>
 #include <vector>

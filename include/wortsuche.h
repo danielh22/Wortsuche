@@ -1,7 +1,7 @@
 #ifndef WORTSUCHE_H
 #define WORTSUCHE_H
 
-#include "trieNode.h"
+#include "trie.h"
 
 void searchHelper(TrieNode* root, std::vector<TrieNode*>& threadNode);
 

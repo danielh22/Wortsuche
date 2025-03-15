@@ -8,9 +8,10 @@
             "args": [
                 "-g",
                 "-I${workspaceFolder}/include",  // Füge den Include-Pfad hinzu
-                "${workspaceFolder}/src/trieNode.cpp",  // Weitere .cpp-Datei
+                "${workspaceFolder}/src/trie.cpp",  // Weitere .cpp-Datei
                 "${workspaceFolder}/src/wortsuche.cpp",  // Weitere .cpp-Datei
                 "${workspaceFolder}/src/wortliste.cpp",  // Weitere .cpp-Datei
+                "${workspaceFolder}/src/testclient.cpp",  // Weitere .cpp-Datei
 
                 "${file}",
                 "-o",
