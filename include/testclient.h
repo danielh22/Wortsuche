@@ -6,6 +6,7 @@
 
 using namespace std;
 
-void Testclient(Trie* trie, string& key, int numRuns);
+void Testclient(Trie* trie, string& key, vector<string> wordList, int numRuns);
+bool Validation(vector<string> allWords, vector<string>& foundWords, string& key);
 
 #endif

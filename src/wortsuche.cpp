@@ -39,6 +39,10 @@ vector<string> searchFinal(TrieNode* root, string& key){
     vector<vector<TrieNode*>> ThreadNodes(numThreads);
 
     while(!Nodes.empty()){
+        for(TrieNode* t : Nodes){
+            if(t->EndOfWord==true) FoundWords.push_back(t->data);
+        }
+            
         unsigned int batchSize = Nodes.size() / numThreads + 1;
         
         for (unsigned int i = 0; i < numThreads; i++) {
@@ -58,15 +62,14 @@ vector<string> searchFinal(TrieNode* root, string& key){
             t.join();
         }
 
-        threads.clear();  // Leere die Threads-Liste für die nächste Runde
         Nodes.clear();
         for(int i=0; i<numThreads; ++i){
             Nodes.insert(Nodes.end(), ThreadNodes[i].begin(), ThreadNodes[i].end());
             ThreadNodes[i].clear();
         }
-        for(TrieNode* t : Nodes){
-            FoundWords.push_back(t->data);
-        }
+
+        threads.clear();  // Leere die Threads-Liste für die nächste Runde
+
     }
     return FoundWords;
 }
