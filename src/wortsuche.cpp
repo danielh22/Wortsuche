@@ -15,7 +15,7 @@ void searchHelper(TrieNode* root, vector<TrieNode*>& threadNode){
     threadNode.insert(threadNode.end(), localNodes.begin(), localNodes.end());
 }
 
-vector<string> searchFinal(TrieNode* root, string& key){
+vector<string> searchWords(TrieNode* root, string& key){
     TrieNode* current = root;
     vector<string> FoundWords;
     vector<TrieNode*> Nodes;
@@ -24,7 +24,7 @@ vector<string> searchFinal(TrieNode* root, string& key){
         if(current->children[c-'A'] == nullptr) return FoundWords;
         current = current->children[c-'A'];
     }
-    if(current->EndOfWord) FoundWords.push_back(current->data);
+    if(current->endOfWord) FoundWords.push_back(current->data);
 
     unsigned int numThreads = std::thread::hardware_concurrency(); // Adjust thread count based on hardware
     vector<thread> threads;
@@ -40,7 +40,7 @@ vector<string> searchFinal(TrieNode* root, string& key){
 
     while(!Nodes.empty()){
         for(TrieNode* t : Nodes){
-            if(t->EndOfWord==true) FoundWords.push_back(t->data);
+            if(t->endOfWord==true) FoundWords.push_back(t->data);
         }
             
         unsigned int batchSize = Nodes.size() / numThreads + 1;

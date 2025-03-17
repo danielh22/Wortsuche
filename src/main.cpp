@@ -21,11 +21,11 @@ int main(void) {
         trie->insert(s);
     }
 
-    string searchKey = "VEC";
+    string searchKey = "PA";
 
     Testclient(trie, searchKey, wordList, 20);
 
-    // vector<string> foundWords = searchFinal(trie->root, searchKey);
+    // vector<string> foundWords = searchWords(trie->root, searchKey);
 
     // for(string& word : foundWords){
     //     cout << word << " ";

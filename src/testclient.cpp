@@ -14,7 +14,7 @@ void Testclient(Trie* trie, string& key, vector<string> wordList, int numRuns){
     auto start = chrono::high_resolution_clock::now();
     
     for(int i=0; i<numRuns; ++i){
-        foundWords = searchFinal(trie->root, key);
+        foundWords = searchWords(trie->root, key);
     }
     
     auto end = chrono::high_resolution_clock::now();
@@ -41,8 +41,12 @@ bool Validation(vector<string> allWords, vector<string>& foundWords, string& key
             cout << "Not all words have correct Prefix!" << endl; 
             return false;
         }
+        auto iter = find(allWords.begin(), allWords.end(), str);
+        if(iter == allWords.end()){
+            cout << "Wrong word found in list" << endl;
+            return false;
+        }
     }
-
 
     unordered_set<string> allWordsSet(allWords.begin(), allWords.end());
     unordered_set<string> foundWordsSet(foundWords.begin(), foundWords.end());

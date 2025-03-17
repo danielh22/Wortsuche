@@ -3,7 +3,7 @@
 
 using namespace std;
 
-TrieNode::TrieNode() : EndOfWord(false) {
+TrieNode::TrieNode() : endOfWord(false), data("") {
     for(int i=0; i<NUMBER_OF_LETTERS; ++i){
         children[i] = nullptr;
     }
@@ -33,7 +33,7 @@ void Trie::deleteTrie(TrieNode* node) {
 
 void Trie::insert(string& key){
     TrieNode* current = this->root;
-    string parent_data;
+    string parent_data = "";
     
     for (int i=0; i<key.length(); ++i){
         char c = key[i];
@@ -45,5 +45,5 @@ void Trie::insert(string& key){
         current->data = parent_data + c;
         parent_data = parent_data + c;
     }
-    current->EndOfWord = true;
+    current->endOfWord = true;
 }

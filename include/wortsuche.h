@@ -5,6 +5,6 @@
 
 void searchHelper(TrieNode* root, std::vector<TrieNode*>& threadNode);
 
-std::vector<std::string> searchFinal(TrieNode* root, std::string& key);
+std::vector<std::string> searchWords(TrieNode* root, std::string& key);
 
 #endif
