@@ -6,8 +6,8 @@
 
 using namespace std;
 
-void generateWords(int length, const std::string& currentWord, std::vector<std::string>& wordList);
+void createWord(int length, const std::string& currentWord, std::vector<std::string>& wordList);
 
-std::vector<std::string> createWordListRecursive(int length);
+std::vector<std::string> createWordList(int wordlength);
 
 #endif

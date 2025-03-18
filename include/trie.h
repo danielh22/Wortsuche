@@ -10,7 +10,7 @@ struct TrieNode{
     public: 
         std::string data;
         TrieNode* children[NUMBER_OF_LETTERS];
-        bool EndOfWord;
+        bool endOfWord;
 
         TrieNode();
 };

@@ -3,7 +3,9 @@
 
 using namespace std;
 
-TrieNode::TrieNode() : EndOfWord(false) {
+//Constructor, 26 possible children, all are nullptr for initialization
+//endOfWord and data are false and an empty string for new nodes (necessary for root)
+TrieNode::TrieNode() : endOfWord(false), data("") {
     for(int i=0; i<NUMBER_OF_LETTERS; ++i){
         children[i] = nullptr;
     }
@@ -13,6 +15,7 @@ Trie::Trie(){
     this->root = new TrieNode;
 }
 
+//destructor to avoid memory leaks
 Trie::~Trie(){
     deleteTrie(root);
     cout << "Trie deleted" << endl;
@@ -33,7 +36,7 @@ void Trie::deleteTrie(TrieNode* node) {
 
 void Trie::insert(string& key){
     TrieNode* current = this->root;
-    string parent_data;
+    string parent_data = "";
     
     for (int i=0; i<key.length(); ++i){
         char c = key[i];
@@ -45,5 +48,5 @@ void Trie::insert(string& key){
         current->data = parent_data + c;
         parent_data = parent_data + c;
     }
-    current->EndOfWord = true;
+    current->endOfWord = true;
 }
