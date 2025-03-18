@@ -14,12 +14,12 @@ void createWord(int length, const string& currentWord, vector<string>& wordList)
     }
 }
 
-vector<string> createWordListRecursive(int length){
+vector<string> createWordList(int wordlength){
     random_device gen;
     mt19937 g(gen());
     vector<string> wordList;
 
-    createWord(length, "", wordList);
+    createWord(wordlength, "", wordList);
     shuffle(wordList.begin(), wordList.end(), gen);
 
     return wordList;

@@ -3,6 +3,8 @@
 
 using namespace std;
 
+//Constructor, 26 possible children, all are nullptr for initialization
+//endOfWord and data are false and an empty string for new nodes (necessary for root)
 TrieNode::TrieNode() : endOfWord(false), data("") {
     for(int i=0; i<NUMBER_OF_LETTERS; ++i){
         children[i] = nullptr;
@@ -13,6 +15,7 @@ Trie::Trie(){
     this->root = new TrieNode;
 }
 
+//destructor to avoid memory leaks
 Trie::~Trie(){
     deleteTrie(root);
     cout << "Trie deleted" << endl;

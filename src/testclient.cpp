@@ -35,32 +35,35 @@ void Testclient(Trie* trie, string& key, vector<string> wordList, int numRuns){
 
 
 bool Validation(vector<string> allWords, vector<string>& foundWords, string& key){
-
+    //change vector to set to speed up
+    unordered_set<string> allWordsSet(allWords.begin(), allWords.end());
+    unordered_set<string> foundWordsSet(foundWords.begin(), foundWords.end());
     for(string& str : foundWords){
+        //Check if every word in foundWords has the correct prefix
         if(str.rfind(key, 0) != 0){
-            cout << "Not all words have correct Prefix!" << endl; 
+            cout << "Not all found words have correct Prefix!" << endl; 
             return false;
         }
-        auto iter = find(allWords.begin(), allWords.end(), str);
-        if(iter == allWords.end()){
-            cout << "Wrong word found in list" << endl;
+        //Check if all found words are really in allWords
+        if(allWordsSet.find(str) == allWordsSet.end()){
+            cout <<  "Wrong word found: " << str << "! " << endl;
             return false;
         }
     }
 
-    unordered_set<string> allWordsSet(allWords.begin(), allWords.end());
-    unordered_set<string> foundWordsSet(foundWords.begin(), foundWords.end());
+    //delete all found words from allWordsSet
+    //Necessary to check if in allWordsSet are still words with correct Prefix that the search algorithm missed
     for(auto it = allWordsSet.begin(); it!= allWordsSet.end();){
         if(foundWordsSet.find(*it) != foundWordsSet.end()){
             it = allWordsSet.erase(it);
         }
         else ++it;
     }
-    
+
+    //check if search-algorithm missed some words
     for(const string& word : allWordsSet){
         if(word.substr(0, key.size()) == key){
-            cout << word;
-            cout << "Not all words found! " << endl;
+            cout << "Not all words found! " << word << " was no found." << endl;
             return false;
         }
     }

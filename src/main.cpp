@@ -8,7 +8,7 @@ using namespace std;
 
 int main(void) {
 
-    vector<string> wordList = createWordListRecursive(4);
+    vector<string> wordList = createWordList(4);    //creates wordlist, wordlength=4
 
     // cout << "all words: " << endl; 
     // for(string& word : wordList){
@@ -21,9 +21,9 @@ int main(void) {
         trie->insert(s);
     }
 
-    string searchKey = "PA";
+    string searchKey = "UZ";    //Search-prefix for search-algorithm
 
-    Testclient(trie, searchKey, wordList, 20);
+    Testclient(trie, searchKey, wordList, 20);  
 
     // vector<string> foundWords = searchWords(trie->root, searchKey);
 
